@@ -43,12 +43,51 @@ def bloco_cards(dados: pd.DataFrame):
             col_card2.metric(label="Evolução da taxa de clique", value=f'{porcent_cliques_atual}%', delta=round(porcent_cliques_atual-porcent_cliques_passado,2), border=True)
 
         with col3:
-            pass
+            melhor_email_taxa_abertura = dados_card.loc[dados_card['email_opened_rate'].idxmax()]
+            melhor_email_taxa_cliques = dados_card.loc[dados_card['email_clicked_rate'].idxmax()]
 
+            horario_taxa_abertura =  pd.to_datetime(melhor_email_taxa_abertura['send_at']).strftime('%H:%M')
+            horario_taxa_clique  = pd.to_datetime(melhor_email_taxa_cliques['send_at']).strftime('%H:%M')
+
+            col_card3.metric(label=f'Horário de melhor engajamento', value=f'{horario_taxa_abertura} - {horario_taxa_clique}' if horario_taxa_abertura != horario_taxa_clique else f'{horario_taxa_abertura}', border=True, help='Horário Taxa de Abertura - Horário Taxa de Clique',height="stretch")    
+
+
+def bloco_picos_horario(dados):
+    dados['send_at'] = pd.to_datetime(dados['send_at'])
+
+    dados['hora_envio'] = dados['send_at'].dt.strftime('%H:%M')
+
+    picos = (
+        dados.groupby('hora_envio')
+        .size()
+        .reset_index(name='quantidade')
+        .sort_values('hora_envio')
+    )
+
+    st.markdown("### ⏰ Picos de horário de envio")
+    st.line_chart(picos, x='hora_envio', y='quantidade')
+
+
+
+
+def bloco_melhor_email(dados):
+    dados['media_ponderada'] = (dados['email_opened_rate'] * 0.4) + (dados['email_clicked_rate'] * 0.6)
+    melhor_email = (dados.loc[dados['media_ponderada'].idxmax()]) 
+
+    melhor_email_df = pd.DataFrame({
+        "Assunto do e-mail": [melhor_email['campaign_name']],
+        "Data e hora do envio": [melhor_email['send_at']],
+        "Taxa de abertura (%)": [melhor_email['email_opened_rate']],
+        "Taxa de clique (%)": [melhor_email['email_clicked_rate']],
+        "Quantidade total de cliques": [melhor_email['email_clicked_count']]
+    })
+
+    melhor_email_df["Data e hora do envio"] = pd.to_datetime(melhor_email_df["Data e hora do envio"]).dt.strftime('%d/%m/%Y %H:%M')
+
+    st.markdown("### 📊 E-mail com melhor desempenho")
+    st.dataframe(melhor_email_df)
 
 def bloco_tabela(dados):
-    st.markdown('### E-mail Marketing')
-
     df = dados[[
         "campaign_name",
         "send_at",
@@ -85,6 +124,10 @@ def bloco_tabela(dados):
 
 def bloco_principal(start_date, end_date):
     dados = pd.DataFrame(get_dados(start_date, end_date))
+
+    st.markdown('### E-mail Marketing')
     bloco_cards(dados)
+    bloco_picos_horario(dados)
+    bloco_melhor_email(dados)
     bloco_tabela(dados)
   
