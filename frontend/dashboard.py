@@ -1,35 +1,29 @@
-import streamlit as st
+import dash_bootstrap_components as dbc
+from dash import Dash, dcc, Input, Output, html
 import requests
-import pandas as pd
-from blocks.email_marketing import bloco_principal
+from components.sidebar.sidebar import sidebar
+from components.email_marketing.components.email_marketing import container_email_marketing
+from services.rd_station_services import get_dados
 
-def sidebar():
-    st.logo('./logo.webp', size='large')
-    st.sidebar.title('Cliente')
-    cliente = st.sidebar.selectbox('Vizualizar qual cliente?', ('Hospitalar'))
-    
-    email_marketing = st.sidebar.checkbox("E-mail Marketing")
+app = Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO])
 
-    start_date = None
-    end_date = None
-    if email_marketing:
-        start_date = st.sidebar.date_input('Digite um início: ')
-        end_date = st.sidebar.date_input('Digite um final: ')
+opcoes = dbc.Tabs([
+        dbc.Tab(label='E-mail Marketing', id='email-marketing'),
+        dbc.Tab(label='Landing Page', id='lading-page')
+    ],
+    id='tabs',
+    active_tab='email-marketing',
+    style={'margin-bottom':'30px'}
+)
 
-    return {
-        'cliente' : cliente,
-        'email_marketing' : email_marketing,
-        'start_date' : start_date,
-        'end_date' : end_date
-    }
- 
-def main():
-    st.set_page_config(layout='wide')
+app.layout = dbc.Container([
+   sidebar,
+   opcoes,
+   container_email_marketing(get_dados('2025-09-29', '2025-10-29'))
+],
+    fluid=True,
+    style={'margin' : 0, 'padding' : 0}
+)
 
-    cliente_escolhido = sidebar()
-    st.title(f'Dashboard - {cliente_escolhido['cliente']}')
-    if cliente_escolhido['email_marketing']:
-        bloco_principal(cliente_escolhido['start_date'], cliente_escolhido['end_date'])
-
-
-main()
+if __name__ == '__main__':
+    app.run(debug=True)
