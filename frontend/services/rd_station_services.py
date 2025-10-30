@@ -7,5 +7,6 @@ def get_dados(start_date=None, end_date=None):
         "end_date": end_date
     }
 
-    response = requests.get(url, params=queryparams)  
+    response = requests.get(url, params=queryparams)
+
     return response.json()

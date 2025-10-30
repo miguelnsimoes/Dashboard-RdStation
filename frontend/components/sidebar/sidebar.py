@@ -6,23 +6,26 @@ sidebar = dbc.Navbar(
         [
             dbc.Row(
             [
-                dbc.Col(html.Img(src='../../assets/logo.webp', height='30px'), style={'background': 'white', 'border-radius' : '10px', 'padding': '5px'}),
-                dbc.Col(dbc.NavbarBrand('Dashboard', style={'color':'white'})),
+                dbc.Col(html.Img(src='../../assets/logo.webp', height='30px')),
+                dbc.Col(dbc.NavbarBrand('Dashboard', style={'color':'#004381'})),
             ],
             className='d-flex justify-content-center align-items-center'
         ),
-            dbc.DropdownMenu(
-                [
-                    dbc.DropdownMenuItem('Hospitalar', id='id-hospitalar')
-                ],
-                label='Clientes',
-                in_navbar=True,
-                nav=True,
-                style={'color':'white'}
-            ),
+            dbc.Row(
+                dbc.DropdownMenu(
+                    [
+                        dbc.DropdownMenuItem('Hospitalar', id='id-hospitalar')
+                    ],
+                    label='Clientes',
+                    in_navbar=True,
+                    nav=True,
+                    style={'color':'#004381'}
+                ),
+            )
+            
         ],
     ),
     style={'padding':'40px', 'height': '60px'},
-    color='secondary',
+    color='white',
     dark=True,
 )
