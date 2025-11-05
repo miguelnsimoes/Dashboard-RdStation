@@ -68,7 +68,7 @@ def card_taxa_abertura(dados: pd.DataFrame):
         style={
             'backgroundColor': '#0d1b2a',
             'color': 'white',
-            'border': f'2px solid {cor}',
+            'border': f'2px solid #08B9FF',
             'borderRadius': '10px',
             'textAlign': 'center',
             'padding': '5px',
@@ -122,7 +122,7 @@ def card_taxa_clique(dados: pd.DataFrame):
         style={
             'backgroundColor': '#0d1b2a',
             'color': 'white',
-            'border': f'2px solid {cor}',
+            'border': f'2px solid #08B9FF',
             'borderRadius': '10px',
             'textAlign': 'center',
             'padding': '5px',
@@ -156,13 +156,13 @@ def card_horario_melhor_engajamento(dados: pd.DataFrame):
     return dbc.Card(
         dbc.CardBody([
             html.H6("Melhor Horário de Engajamento", className="card-title"),
-            html.H3(f"{melhor_hora}", className="card-text", style={'color': '#df6919'}),
-            html.P(f"Média de engajamento: {engajamento_medio:.2f}%", className="text-secondary")
+            html.H3(f"{melhor_hora}", className="card-text", style={'color': '#fffff'}),
+            html.P(f"Média de engajamento: {engajamento_medio:.2f}%", className="text-secondary", style={'color': '#fffff'})
         ]),
         style={
             'backgroundColor': '#0d1b2a',
             'color': 'white',
-            'border': '2px solid #df6919',
+            'border': '2px solid #08B9FF',
             'borderRadius': '10px',
             'textAlign': 'center',
             'padding': '5px',

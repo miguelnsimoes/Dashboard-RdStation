@@ -1,24 +1,27 @@
 import dash_bootstrap_components as dbc
-from dash import Dash, dcc, Input, Output, html
+from dash import Dash, html, Input, Output
 from components.sidebar.sidebar import sidebar
 from services.rd_station_services import get_dados
 from components.email_marketing.email_marketing import container_email_marketing
 import pandas as pd
 
+app = Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO], suppress_callback_exceptions=True)
 
-app = Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO])
 
 def dados_rdstation():
     dados = get_dados('2025-09-29', '2025-10-29')
-    print("🔎 Retorno do get_dados:", dados)  # <-- debug
 
-    if not isinstance(dados, dict) or 'emails' not in dados:
-        print("⚠️ Erro: resposta inválida do backend. Esperado {'emails': [...]}")
+    if not isinstance(dados, dict):
+        print("⚠️ Resposta inesperada:", dados)
         return pd.DataFrame()
-    
+
+    if 'emails' not in dados:
+        print("⚠️ Chave 'emails' não encontrada:", dados)
+        return pd.DataFrame()
+
     df = pd.DataFrame(dados['emails'])
 
-    df = df.rename(columns={
+    rename_map = {
         'send_at': 'data_envio',
         'campaign_id': 'id_campanha',
         'campaign_name': 'nome_campanha',
@@ -34,41 +37,69 @@ def dados_rdstation():
         'email_clicked_rate': 'taxa_clique',
         'email_spam_reported_rate': 'taxa_spam',
         'contacts_count': 'total_contatos'
-    })
-    
+    }
+
+    df = df.rename(columns={k: v for k, v in rename_map.items() if k in df.columns})
+
+    if 'data_envio' not in df.columns:
+        print("⚠️ Coluna 'data_envio' ausente. Colunas disponíveis:", df.columns.tolist())
+        return pd.DataFrame()
+
+    df['data_envio'] = pd.to_datetime(df['data_envio'], errors='coerce')
+
     return df
 
 
-
-opcoes = dbc.Tabs([
-        dbc.Tab(label='E-mail Marketing', id='email-marketing'),
-        dbc.Tab(label='Landing Page', id='lading-page')
+tabs = dbc.Tabs(
+    [
+        dbc.Tab(label='E-mail Marketing', tab_id='email-marketing'),
+        dbc.Tab(label='Landing Page', tab_id='lading-page'),
     ],
     id='tabs',
     active_tab='email-marketing',
-    style={'margin-bottom':'20px'}
+    style={'margin-bottom': '20px'}
 )
+
 
 app.layout = dbc.Container(
     [
         sidebar,
-        opcoes,
-        container_email_marketing(dados_rdstation())
+        tabs,
+        html.Div(id='conteudo-dashboard')
     ],
     fluid=True,
     style={
         'margin': 0,
         'padding': 0,
-        'overflow': 'hidden',
+        'overflowX': 'hidden',
         'width': '100vw',
         'height': '100vh',
         'display': 'flex',
-        'flexDirection': 'column'
+        'flexDirection': 'column',
+        'background-color':'#091023'
     }
 )
 
+
+@app.callback(
+    Output('conteudo-dashboard', 'children'),
+    Input('tabs', 'active_tab')
+)
+def switch_tab(at):
+    df = dados_rdstation()
+
+    if df.empty:
+        return dbc.Alert(
+            "Nenhum dado disponível no momento. Verifique a conexão com o RD Station ou o token de acesso.",
+            color="warning",
+            className="m-3",
+        )
+
+    if at == 'email-marketing':
+        return container_email_marketing(df)
+    else:
+        return dbc.Alert("Essa página ainda está em construção!", color="info", className="m-3")
+
+
 if __name__ == '__main__':
-    app.run(
-        host='0.0.0.0',
-        port='8050',
-        debug=True)
+    app.run(host='0.0.0.0', port=8050, debug=True)
