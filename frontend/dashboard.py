@@ -1,9 +1,13 @@
 import dash_bootstrap_components as dbc
 from dash import Dash, html, Input, Output
+import pandas as pd
 from components.sidebar.sidebar import sidebar
+
 from services.rd_station_services import get_dados
 from components.email_marketing.email_marketing import container_email_marketing
-import pandas as pd
+from services.rd_station_services import get_landing_page_data
+from components.landing_pages.landing_page import container_landing_pages
+
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO], suppress_callback_exceptions=True)
 
@@ -49,6 +53,10 @@ def dados_rdstation():
 
     return df
 
+def dados_landing_pages():
+    df = get_landing_page_data('2025-08-29', '2025-10-29')
+    return df
+
 
 tabs = dbc.Tabs(
     [
@@ -85,20 +93,26 @@ app.layout = dbc.Container(
     Output('conteudo-dashboard', 'children'),
     Input('tabs', 'active_tab')
 )
+
+
 def switch_tab(at):
-    df = dados_rdstation()
-
-    if df.empty:
-        return dbc.Alert(
-            "Nenhum dado disponível no momento. Verifique a conexão com o RD Station ou o token de acesso.",
-            color="warning",
-            className="m-3",
-        )
-
     if at == 'email-marketing':
-        return container_email_marketing(df)
+        df_email = dados_rdstation()
+        if df_email.empty:
+            return dbc.Alert(
+                "Nenhum dado disponível no momento. Verifique a conexão com o RD Station ou o token de acesso.",
+                color="warning",
+                className="m-3",
+            )
+        return container_email_marketing(df_email)
+    
+    elif at == 'lading-page':
+        df_lp = dados_landing_pages()
+        return container_landing_pages(df_lp)
+
     else:
-        return dbc.Alert("Essa página ainda está em construção!", color="info", className="m-3")
+        return dbc.Alert("Pagina nao encontrada", color="danger", className="m-3")
+
 
 
 if __name__ == '__main__':

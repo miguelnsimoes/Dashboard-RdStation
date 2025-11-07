@@ -8,7 +8,7 @@ from backend.models.vendas import VendaCRM
 
 router = APIRouter(prefix="/crm", tags=["CRM"])
 
-# Esta é a rota que o dashboard vai usar para pegar todas as vendas
+# rota que o dashboard vai usar para pegar todas as vendas
 @router.get("/vendas/")
 async def get_vendas_por_periodo(start_date: str, end_date: str):
     
@@ -82,7 +82,7 @@ async def get_venda_por_id(venda_id: str):
     
    
     try:
-        # Usa o molde VendaCRM para traduzir a resposta
+        # usa o molde VendaCRM para traduzir a resposta
         venda_validada = VendaCRM.model_validate(data_bruta['data'])
         return venda_validada
     

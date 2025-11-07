@@ -4,7 +4,6 @@ from backend.core.config import settings
 
 router = APIRouter(prefix="/newsletter", tags=["Newsletter"])
 
-
 @router.get("/")
 async def get_newsletter(start_date: str, end_date: str):
     url = (

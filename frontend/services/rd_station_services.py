@@ -15,6 +15,8 @@ def get_dados(start_date=None, end_date=None):
     except requests.exceptions.RequestException as e:
         print(f"Erro ao buscar dados de Newsletter: {e}")
         return {} 
+    
+    
 
 def get_landing_page_data(start_date: str, end_date: str) -> pd.DataFrame:
     url = 'http://127.0.0.1:8000/landing-pages/' 
