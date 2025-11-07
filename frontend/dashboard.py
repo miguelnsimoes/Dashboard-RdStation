@@ -54,7 +54,7 @@ def dados_rdstation():
     return df
 
 def dados_landing_pages():
-    df = get_landing_page_data('2025-08-29', '2025-10-29')
+    df = get_landing_page_data('2025-08-09', '2025-11-07')
     return df
 
 
@@ -116,4 +116,4 @@ def switch_tab(at):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8050, debug=True)
+    app.run(host='0.0.0.0', port=8051, debug=True)
