@@ -21,7 +21,7 @@ def card_visitas(dados: pd.DataFrame):
             'border': '2px solid #08B9FF', 'borderRadius': '10px',
             'textAlign': 'center', 'padding': '5px'
         }
-    )
+    )   
 
 
 def card_leads(dados: pd.DataFrame):

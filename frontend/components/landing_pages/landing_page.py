@@ -15,7 +15,7 @@ def container_landing_pages(dados: pd.DataFrame):
     return dbc.Container(
         [
             dbc.Row(
-                html.H1("pagina lp do miguel", style={'color': 'white'}),
+                html.H1("Performance de Landing Pages", style={'color': 'white'}),
                 className="mb-4",
             ),
             dbc.Row(

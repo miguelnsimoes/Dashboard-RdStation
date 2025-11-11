@@ -6,7 +6,7 @@ router = APIRouter(prefix="/newsletter", tags=["Newsletter"])
 
 @router.get("/")
 async def get_newsletter(start_date: str, end_date: str):
-    url = (
+    url = ( 
         f"https://api.rd.services/platform/analytics/emails"
         f"?start_date={start_date}&end_date={end_date}"
     )

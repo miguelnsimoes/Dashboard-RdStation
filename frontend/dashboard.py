@@ -11,6 +11,10 @@ from components.landing_pages.landing_page import container_landing_pages
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO], suppress_callback_exceptions=True)
 
+def get_datas_filtro():
+    end_date = date.today()
+    start_date = end_date - timedelta(days = 90)
+    return start_date.isoformat(), end_date.isoformat()
 
 def dados_rdstation():
     dados = get_dados('2025-09-29', '2025-10-29')
@@ -55,6 +59,12 @@ def dados_rdstation():
 
 def dados_landing_pages():
     df = get_landing_page_data('2025-08-09', '2025-11-07')
+    return df
+
+
+def dados_vendas():
+    start_date, end_date = get_datas_filtro()
+    df = get_datas_filtro(start_date, end_date)
     return df
 
 
@@ -108,12 +118,12 @@ def switch_tab(at):
     
     elif at == 'lading-page':
         df_lp = dados_landing_pages()
-        return container_landing_pages(df_lp)
+        df_vendas = dados_vendas()
+        return container_landing_pages(df_lp, df_vendas)
 
     else:
         return dbc.Alert("Pagina nao encontrada", color="danger", className="m-3")
 
-
-
+   
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8051, debug=True)
