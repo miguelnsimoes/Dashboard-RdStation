@@ -17,10 +17,14 @@ def card_visitas(dados: pd.DataFrame):
             html.P("Total de visitas no período", className="text-secondary")
         ]),
         style={
-            'backgroundColor': '#0d1b2a', 'color': 'white',
-            'border': '2px solid #08B9FF', 'borderRadius': '10px',
-            'textAlign': 'center', 'padding': '5px'
-        }
+            'backgroundColor': '#0d1b2a',
+            'color': 'white',
+            'border': f'2px solid #08B9FF',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            'padding': '5px',
+            'height': '100%'
+            }
     )   
 
 
@@ -38,10 +42,14 @@ def card_leads(dados: pd.DataFrame):
             html.P("Total de leads gerados no período", className="text-secondary")
         ]),
         style={
-            'backgroundColor': '#0d1b2a', 'color': 'white',
-            'border': '2px solid #08B9FF', 'borderRadius': '10px',
-            'textAlign': 'center', 'padding': '5px'
-        }
+            'backgroundColor': '#0d1b2a',
+            'color': 'white',
+            'border': f'2px solid #08B9FF',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            'padding': '5px',
+            'height': '100%'
+            }
     )
 
 def card_taxa_conversao(dados: pd.DataFrame):
@@ -64,23 +72,63 @@ def card_taxa_conversao(dados: pd.DataFrame):
             html.P("Média (Leads / Visitas) no período", className="text-secondary")
         ]),
         style={
-            'backgroundColor': '#0d1b2a', 'color': 'white',
-            'border': '2px solid #08B9FF', 'borderRadius': '10px',
-            'textAlign': 'center', 'padding': '5px'
-        }
+            'backgroundColor': '#0d1b2a',
+            'color': 'white',
+            'border': f'2px solid #08B9FF',
+            'borderRadius': '10px',
+            'textAlign': 'center',
+            'padding': '5px',
+            'height': '100%'
+            }
     )
 
 
-def container_cards_lps(dados: pd.DataFrame):
-    
-    if dados.empty:
+def card_conversao_comercial(dados_lp: pd.DataFrame, dados_vendas: pd.DataFrame):
+    try:
+        total_leads = pd.to_numeric(dados_lp['conversion_count']).sum()
+        total_vendas = 0
+        
+        if 'status' in dados_vendas.columns:
+            total_vendas = len(dados_vendas[dados_vendas['status'] =='won'])
+        
+        if total_leads > 0:
+            taxa_comercial = (total_vendas / total_leads) * 100
+        else:
+            taxa_comercial = 0
+    except Exception as e:
+        print(f"erro ao calcular card 4: {e}")
+        taxa_comercial = 0
+
+    return dbc.Card(
+            dbc.CardBody([
+                html.H6("Conversão Comercial", className="card-title"),
+                html.H3(f"{taxa_comercial:.2f}%", className="card-text"), 
+                html.P(f"Total de {total_vendas} vendas", className="text-secondary")
+            ]),
+            style={
+                'backgroundColor': '#0d1b2a',
+                'color': 'white',
+                'border': f'2px solid #08B9FF',
+                'borderRadius': '10px',
+                'textAlign': 'center',
+                'padding': '5px',
+                'height': '100%'
+                }
+        )
+
+
+
+def container_cards_lps(dados_lp: pd.DataFrame, dados_vendas: pd.DataFrame):
+    if dados_lp.empty:
         return None 
 
     return dbc.Row(
         [
-            dbc.Col(card_visitas(dados), md=4),
-            dbc.Col(card_leads(dados), md=4),
-            dbc.Col(card_taxa_conversao(dados), md=4),
+            dbc.Col(card_visitas(dados_lp), md=3),
+            dbc.Col(card_leads(dados_lp), md=3),
+            dbc.Col(card_taxa_conversao(dados_lp), md=3),
+            dbc.Col(card_conversao_comercial(dados_lp, dados_vendas), md=3),
         ],
         className="g-3 d-flex align-items-stretch",
     )
+

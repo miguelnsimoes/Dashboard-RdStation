@@ -7,7 +7,6 @@ def get_dados(start_date=None, end_date=None):
         "start_date": start_date,
         "end_date": end_date
     }
-
     try:
         response = requests.get(url, params=queryparams)
         response.raise_for_status() 
@@ -41,6 +40,7 @@ def get_landing_page_data(start_date: str, end_date: str) -> pd.DataFrame:
         print(f"Erro ao processar dados das Landing Pages: {e}")
         return pd.DataFrame()
     
+
 
 def get_deals_data(start_date: str, end_date: str) -> pd.DataFrame:
     url = 'http://127.0.0.1:8000/crm/deals/'

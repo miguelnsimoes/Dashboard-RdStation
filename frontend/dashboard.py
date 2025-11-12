@@ -2,11 +2,13 @@ import dash_bootstrap_components as dbc
 from dash import Dash, html, Input, Output
 import pandas as pd
 from components.sidebar.sidebar import sidebar
+from datetime import date, timedelta
 
 from services.rd_station_services import get_dados
 from components.email_marketing.email_marketing import container_email_marketing
 from services.rd_station_services import get_landing_page_data
 from components.landing_pages.landing_page import container_landing_pages
+from services.rd_station_services import get_deals_data
 
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO], suppress_callback_exceptions=True)
@@ -54,7 +56,6 @@ def dados_rdstation():
         return pd.DataFrame()
 
     df['data_envio'] = pd.to_datetime(df['data_envio'], errors='coerce')
-
     return df
 
 def dados_landing_pages():
@@ -64,7 +65,7 @@ def dados_landing_pages():
 
 def dados_vendas():
     start_date, end_date = get_datas_filtro()
-    df = get_datas_filtro(start_date, end_date)
+    df = get_deals_data(start_date, end_date)
     return df
 
 
