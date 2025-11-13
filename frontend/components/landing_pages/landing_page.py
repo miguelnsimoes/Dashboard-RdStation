@@ -4,6 +4,7 @@ import pandas as pd
 
 from .cards_lps import container_cards_lps 
 from .ranking_lps import ranking_lps 
+from .grafico_origem import grafico_origem_visual
 
 def container_landing_pages(dados_lp: pd.DataFrame, dados_vendas: pd.DataFrame):
     
@@ -29,18 +30,15 @@ def container_landing_pages(dados_lp: pd.DataFrame, dados_vendas: pd.DataFrame):
                 ),
                 
                 dbc.Row(
-                    [       
-                        dbc.Col(ranking_lps(dados_lp), md=6),
-                        dbc.Col(
-                            dbc.Card(
-                                dbc.CardBody("Aqui vai o Gráfico de Origem"),
-                                style={'backgroundColor': '#0d1b2a', 'color': 'white', 'height': '100%'}
-                            ),
-                            md=6
-                        ),
+                    [      
+                        dbc.Col(grafico_origem_visual(), md=6, style={'height': '100%'}), 
+                        dbc.Col(ranking_lps(dados_lp), md=6, style={'height': '100%'}),
+                        
                     ],
-                    className="mb-4" 
+                    className="mb-4",
+                    style={'height': '58vh'}
                 )
             ],
             fluid=True,
+            style={'height': '100vh', 'overflow': 'hidden', 'display': 'flex', 'flexDirection': 'column'}
         )

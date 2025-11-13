@@ -74,9 +74,9 @@ def ranking_lps(dados: pd.DataFrame):
             html.Div(
                 linhas_ranking, 
                 style={
-                    'maxHeight': '70vh', 
-                    'overflowY': 'auto', 
-                    'padding': '0.5rem'
+                    'overflowY': 'auto',
+                    'padding': '0.5rem',
+                    'flex': '1'
                 }
             )
         ],
