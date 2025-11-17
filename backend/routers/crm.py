@@ -3,7 +3,7 @@ import httpx
 from backend.core.config import settings
 
 router = APIRouter(prefix="/crm", tags=["CRM"])
-#vendas por periodo
+
 @router.get("/deals/")
 async def get_deals_por_periodo(start_date: str, end_date: str):
     url = (
@@ -11,7 +11,7 @@ async def get_deals_por_periodo(start_date: str, end_date: str):
         f"?start_date={start_date}&end_date={end_date}"
     )
 
-    token = settings.RD_ACCESS_TOKEN.strip()
+    token = settings.RD_CRM_TOKEN.strip()
 
     headers = {
         "Authorization": f"Bearer {token}",
@@ -29,14 +29,24 @@ async def get_deals_por_periodo(start_date: str, end_date: str):
         return {"error": "api_error", "details": response.text}
 
     data_bruta = response.json()
-    deals_brutos = data_bruta.get('deals', []) 
+
+    if isinstance(data_bruta, list) and len(data_bruta) > 0:
+        deals_brutos = data_bruta[0].get('data', [])
+
+    elif isinstance(data_bruta, dict):
+        deals_brutos = data_bruta.get('data', [])
+        
+    else:
+        deals_brutos = []
+        
     return deals_brutos
 
-#venda especifica
 @router.get("/vendas/{venda_id}")
-async def get_venda_por_id(venda_id: str):
-    [cite_start], url = f"https://api.rd.services/crm/v2/deals/{venda_id}"
-    token = settings.RD_ACCESS_TOKEN.strip()
+async def get_venda_por_id(venda_id: str):  
+    url = f"https://api.rd.services/crm/v2/deals/{venda_id}"
+    
+    token = settings.RD_CRM_TOKEN.strip()
+    
     headers = { "Authorization": f"Bearer {token}", "Content-Type": "application/json" }
 
     async with httpx.AsyncClient() as client:

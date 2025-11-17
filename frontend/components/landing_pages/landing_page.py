@@ -26,19 +26,19 @@ def container_landing_pages(dados_lp: pd.DataFrame, dados_vendas: pd.DataFrame):
                 ),
                 dbc.Row(
                     container_cards_lps(dados_lp, dados_vendas),
-                    className="mb-4",
+                    className="mb-4 g-0",
                 ),
                 
                 dbc.Row(
                     [      
-                        dbc.Col(grafico_origem_visual(), md=6, style={'height': '100%'}), 
+                        dbc.Col(grafico_origem_visual(dados_vendas), md=6, style={'height': '100%'}), 
                         dbc.Col(ranking_lps(dados_lp), md=6, style={'height': '100%'}),
                         
                     ],
-                    className="mb-4",
+                    className="mb-4 g-0",
                     style={'height': '58vh'}
                 )
             ],
             fluid=True,
-            style={'height': '100vh', 'overflow': 'hidden', 'display': 'flex', 'flexDirection': 'column'}
+            style={'height': '100vh', 'overflow': 'hidden', 'display': 'flex', 'flexDirection': 'column', 'padding': '10px'}
         )
