@@ -13,18 +13,27 @@ from services.rd_station_services import get_deals_data
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO], suppress_callback_exceptions=True)
 
-def get_comparison_dates():
-    end_date_atual = date.today()
-    start_date_atual = end_date_atual - timedelta(days=90)
-    end_date_anterior = start_date_atual - timedelta(days=1)
-    start_date_anterior = end_date_anterior - timedelta(days=90)
+def get_datas_comparacao():
+    hoje = date.today()
+    end_atual = hoje
+    start_atual = end_atual - timedelta(days=90)
+    end_anterior = start_atual - timedelta(days=1)
+    start_anterior = end_anterior - timedelta(days=90)
 
-    return (
-        start_date_atual.isoformat(), 
-        end_date_atual.isoformat(), 
-        start_date_anterior.isoformat(), 
-        end_date_anterior.isoformat()
+    return(
+        start_atual.isoformat(), end_atual.isoformat(),
+        start_anterior.isoformat(), end_anterior.isoformat()
     )
+
+
+def dados_landing_pages_completo():
+    s_atual, e_atual, s_ant, e_ant = get_datas_comparacao()
+
+    df_atual = get_landing_page_data(s_atual, e_atual)
+    df_anterior = get_landing_page_data(s_ant, e_ant)
+
+    return df_atual, df_anterior
+
 
 def get_datas_filtro():
     end_date = date.today()
@@ -120,7 +129,6 @@ app.layout = dbc.Container(
     Input('tabs', 'active_tab')
 )
 
-
 def switch_tab(at):
     if at == 'email-marketing':
         df_email = dados_rdstation()
@@ -133,9 +141,9 @@ def switch_tab(at):
         return container_email_marketing(df_email)
     
     elif at == 'lading-page':
-        df_lp = dados_landing_pages()
+        df_lp_atual, df_lp_aterior = dados_landing_pages_completo()
         df_vendas = dados_vendas()
-        return container_landing_pages(df_lp, df_vendas)
+        return container_landing_pages(df_lp_atual, df_lp_aterior, df_vendas)
 
     else:
         return dbc.Alert("Pagina nao encontrada", color="danger", className="m-3")
