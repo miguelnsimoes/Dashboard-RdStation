@@ -52,16 +52,14 @@ def get_deals_data(start_date: str, end_date: str) -> pd.DataFrame:
 
     try:
         response = requests.get(url, params=queryparams, timeout=30.0)
-        
         dados_json = response.json()
 
         if isinstance(dados_json, dict):
             if "error" in dados_json or "detail" in dados_json:
                 print(f"ERRO CRM/VENDAS: {dados_json}")
                 return pd.DataFrame()
-
             dados_json = [dados_json]
-
+            
         df = pd.DataFrame(dados_json)
         return df
 

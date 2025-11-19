@@ -11,10 +11,10 @@ def ranking_lps(dados: pd.DataFrame):
     dados_ordenados  = dados_ranking.sort_values(by='conversion_rate', ascending=False)
     
     linhas_ranking = []
-    for i, lp in (dados_ordenados.iterrows()):
+    for rank, (i, lp) in enumerate(dados_ordenados.iterrows()):
         header = dbc.Row(
             [
-                dbc.Col(html.H2(f'{i + 1}º', className='fw-bold text-white'), width=1),
+                dbc.Col(html.H2(f'{rank + 1}º', className='fw-bold text-white'), width=1),
                 dbc.Col(html.H6(f'{lp["asset_identifier"]}', className='text-wrap text-white fw-semibold'), width=8),
                 dbc.Col(html.H4(f'{round(lp["conversion_rate"], 2)}%', style={'color':'#df6919'}), width=3),
             ],

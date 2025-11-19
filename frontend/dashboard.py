@@ -13,10 +13,24 @@ from services.rd_station_services import get_deals_data
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO], suppress_callback_exceptions=True)
 
+def get_comparison_dates():
+    end_date_atual = date.today()
+    start_date_atual = end_date_atual - timedelta(days=90)
+    end_date_anterior = start_date_atual - timedelta(days=1)
+    start_date_anterior = end_date_anterior - timedelta(days=90)
+
+    return (
+        start_date_atual.isoformat(), 
+        end_date_atual.isoformat(), 
+        start_date_anterior.isoformat(), 
+        end_date_anterior.isoformat()
+    )
+
 def get_datas_filtro():
     end_date = date.today()
     start_date = end_date - timedelta(days = 90)
     return start_date.isoformat(), end_date.isoformat()
+
 
 def dados_rdstation():
     dados = get_dados('2025-09-29', '2025-10-29')
@@ -59,7 +73,8 @@ def dados_rdstation():
     return df
 
 def dados_landing_pages():
-    df = get_landing_page_data('2025-08-09', '2025-11-07')
+    start_date, end_date = get_datas_filtro()
+    df = get_landing_page_data(start_date, end_date)
     return df
 
 

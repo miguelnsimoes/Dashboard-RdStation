@@ -3,6 +3,31 @@ from dash import html
 import pandas as pd
 
 
+def gerar_indicador_variacao(valor_atual, valor_anterior, sufixo=""):
+    if valor_anterior > 0:
+        variacao = ((valor_atual - valor_anterior) / valor_anterior) * 100
+    else:
+        variacao = 0
+
+    if variacao > 0:
+        cor = "#5cb85c" 
+        simbolo = "▲"
+    elif variacao < 0:
+        cor = "#d9534f"
+        simbolo = "▼"
+    else:
+        cor = "white"
+        simbolo = "="        
+
+    return html.P(
+        [
+            html.Span(f"{simbolo} {variacao:.1f}%", style={'color': cor, 'fontWeight': 'bold'}),
+            html.Span(f"vs período anterior{sufixo}", style={'color': 'gray', 'fontSize': '0.8rem'})
+        ],
+        className="mb-0"
+    )
+
+#passasr os parametros da nova fuincao a tarde
 def card_visitas(dados: pd.DataFrame):
     try:
         total_visitas = pd.to_numeric(dados['visits_count']).sum()

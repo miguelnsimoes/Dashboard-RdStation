@@ -75,7 +75,7 @@ def atualizar_modal_conteudo(tab_ativa):
         return html.Div([
             html.P("Selecione o período de análise:", className="fw-bold mb-2"),
             dcc.DatePickerRange(
-                id="date-picker-range",
+                id="date-picker-range-email",
                 min_date_allowed=date(2020, 1, 1),
                 max_date_allowed=date.today(),
                 initial_visible_month=date.today(),
@@ -88,9 +88,18 @@ def atualizar_modal_conteudo(tab_ativa):
 
     elif tab_ativa == "lading-page":
         return html.Div([
-            html.P("Filtros para Landing Page:", className="fw-bold mb-2"),
-            dbc.Input(placeholder="Digite o nome da LP...", type="text", className="mb-3"),
-            dbc.Button("Buscar", color="primary")
+            html.P("Selecione o período de análise:", className="fw-bold mb-2"),
+            dcc.DatePickerRange(
+                id="date-picker-range-lp",
+                min_date_allowed=date(2020, 1, 1),
+                max_date_allowed=date.today(),
+                initial_visible_month=date.today(),
+                end_date = date.today(),
+                display_format="DD/MM/YY",
+                className="mb-3"
+            ),
+            html.P("Filtro de LP Específica:", className="fw-bold mb-2 mt-3"),
+            dbc.Input(placeholder="Buscar por nome...", type="text"),
         ])
 
     return html.P("Selecione uma aba para visualizar os filtros.")
