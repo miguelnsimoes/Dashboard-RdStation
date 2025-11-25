@@ -3,7 +3,7 @@ import httpx
 from backend.core.config import settings
 
 router = APIRouter(prefix="/landing-pages", tags=["Landing Pages"])
-
+ 
 @router.get("/")
 async def get_landing_pages_performance(start_date: str, end_date: str):
     

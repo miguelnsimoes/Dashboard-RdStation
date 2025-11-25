@@ -4,9 +4,6 @@ import pandas as pd
 
 
 def gerar_indicador_variacao(valor_atual, valor_anterior, sufixo=""):
-    """
-    Calcula a variação percentual e retorna o elemento visual (setinha).
-    """
     if valor_anterior > 0:
         variacao = ((valor_atual - valor_anterior) / valor_anterior) * 100
     else:
@@ -187,7 +184,6 @@ def container_cards_lps(dados_lp_atual: pd.DataFrame, dados_lp_anterior: pd.Data
             dbc.Col(card_visitas(dados_lp_atual, dados_lp_anterior), md=3),
             dbc.Col(card_leads(dados_lp_atual, dados_lp_anterior), md=3),
             dbc.Col(card_taxa_conversao(dados_lp_atual, dados_lp_anterior), md=3),
-            
             dbc.Col(card_conversao_comercial(dados_lp_atual, dados_vendas), md=3),
         ],
         className="g-3 d-flex align-items-stretch",
