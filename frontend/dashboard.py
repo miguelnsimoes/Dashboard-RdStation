@@ -9,7 +9,7 @@ from components.email_marketing.email_marketing import container_email_marketing
 from services.rd_station_services import get_landing_page_data
 from components.landing_pages.landing_page import container_landing_pages
 from services.rd_station_services import get_deals_data
-
+from services.rd_station_services import get_enriched_contacts_data
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.SUPERHERO], suppress_callback_exceptions=True)
 
@@ -93,6 +93,12 @@ def dados_vendas():
     return df
 
 
+def dados_contatos_enriquecidos():
+    s_atual, e_atual, _, _ = get_datas_comparacao() 
+    df = get_enriched_contacts_data(s_atual, e_atual)
+    return df
+
+
 tabs = dbc.Tabs(
     [
         dbc.Tab(label='E-mail Marketing', tab_id='email-marketing'),
@@ -143,7 +149,8 @@ def switch_tab(at):
     elif at == 'lading-page':
         df_lp_atual, df_lp_aterior = dados_landing_pages_completo()
         df_vendas = dados_vendas()
-        return container_landing_pages(df_lp_atual, df_lp_aterior, df_vendas)
+        df_enreiquecido = dados_contatos_enriquecidos()
+        return container_landing_pages(df_lp_atual, df_lp_aterior, df_vendas, df_enreiquecido)
 
     else:
         return dbc.Alert("Pagina nao encontrada", color="danger", className="m-3")

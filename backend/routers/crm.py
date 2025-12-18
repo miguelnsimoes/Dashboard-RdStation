@@ -2,9 +2,9 @@ from fastapi import APIRouter
 import httpx
 from backend.core.config import settings
 import requests 
+import asyncio
+
 router = APIRouter(prefix="/crm", tags=["CRM"])
-
-
 
 @router.get("/deals/")
 async def get_deals_por_periodo(start_date: str, end_date: str):
@@ -21,7 +21,7 @@ async def get_deals_por_periodo(start_date: str, end_date: str):
     }
 
     async with httpx.AsyncClient() as client:
-        response = await client.get(url, headers=headers, timeout=30.0)
+        response = await client.get(url, headers=headers, timeout=60.0)
 
     if response.status_code == 401:
         return {"error": "invalid_token", "details": "Token inválido."} 
@@ -31,6 +31,7 @@ async def get_deals_por_periodo(start_date: str, end_date: str):
         return {"error": "api_error", "details": response.text}
 
     data_bruta = response.json()
+
 
     if isinstance(data_bruta, list) and len(data_bruta) > 0:
         data_bruta = data_bruta[0] 
@@ -60,7 +61,7 @@ async def get_todos_contatos_email(start_date: str, end_date: str):
                 "page[size]": 100
             }
 
-            response = await client.get(base_url, params=query_params, headers=headers, timeout=30.0)
+            response = await client.get(base_url, params=query_params, headers=headers, timeout=180.0)
 
             if response.status_code != 200:
                 print(f"erro na paginacao dos dados ({response.status_code}) : {response.text}")
@@ -114,7 +115,7 @@ async def get_enriched_contacts(start_date: str, end_date: str):
     emails_list_url = f"http://127.0.0.1:8000/crm/contacts?start_date={start_date}&end_date={end_date}"
     
     try:
-        response_emails = requests.get(emails_list_url, timeout=60) 
+        response_emails = requests.get(emails_list_url, timeout=120) 
         emails = response_emails.json()
     except Exception as e:
         print(f"ERRO: Falha ao buscar lista de emails (Paginação): {e}")
@@ -128,7 +129,26 @@ async def get_enriched_contacts(start_date: str, end_date: str):
         return [] 
     
     contatos_enriquecidos = []
+    emails_para_buscar = emails[:20]#aqui
 
+    async with httpx.AsyncClient(timeout=120) as client:
+
+        tasks = []
+        for email in emails_para_buscar:
+            contact_url = f"http://127.0.0.1:8000/crm/contacts/email/{email}"
+            tasks.append(client.get(contact_url))
+            
+        responses = await asyncio.gather(*tasks, return_exceptions=True)
+
+        for result in responses:
+            if isinstance(result, httpx.Response) and result.status_code == 200:
+                contatos_enriquecidos.append(result.json())
+
+    return contatos_enriquecidos
+
+
+
+'''
     for email in emails[:20]: 
         contact_url = f"http://127.0.0.1:8000/crm/contacts/email/{email}"
         
@@ -141,4 +161,4 @@ async def get_enriched_contacts(start_date: str, end_date: str):
             print(f"Aviso: Contato {email} falhou na busca de detalhe: {e}")
             continue
 
-    return contatos_enriquecidos
+    return contatos_enriquecidos'''

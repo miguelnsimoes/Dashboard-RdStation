@@ -6,7 +6,7 @@ from .cards_lps import container_cards_lps
 from .ranking_lps import ranking_lps 
 from .grafico_origem import grafico_origem_visual
 
-def container_landing_pages(dados_lp: pd.DataFrame, dados_lp_anterior: pd.DataFrame, dados_vendas: pd.DataFrame):
+def container_landing_pages(dados_lp: pd.DataFrame, dados_lp_anterior: pd.DataFrame, dados_vendas: pd.DataFrame, dados_enriquecidos: pd.DataFrame):
     
     if dados_lp.empty:
         return dbc.Alert(
@@ -31,9 +31,8 @@ def container_landing_pages(dados_lp: pd.DataFrame, dados_lp_anterior: pd.DataFr
                 
                 dbc.Row(
                     [      
-                        dbc.Col(grafico_origem_visual(dados_vendas), md=6, style={'height': '100%'}), 
                         dbc.Col(ranking_lps(dados_lp), md=6, style={'height': '100%'}),
-                        
+                        dbc.Col(grafico_origem_visual(dados_enriquecidos), md=6, style={'height': '100%'}), 
                     ],
                     className="mb-4 g-0",
                     style={'height': '58vh'}
